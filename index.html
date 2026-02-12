@@ -1,0 +1,326 @@
+
+<!-- saved from url=(0057)https://www.snoep.at/familie/password_maker_algemeen.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>HashBrown maker</title>
+<style>
+body{
+    background:#2b1b0f;              /* deep brown */
+    color:#e6c8a2;                   /* warm beige */
+    font-family: "Courier New", monospace;
+    font-size:16px;
+    margin:0;
+}
+
+#center{
+    max-width:720px;
+    margin:40px auto;
+    padding:30px;
+    background:#3a2415;              /* lighter brown panel */
+    border:2px solid #a67c52;        /* clay border */
+    border-radius:0;                 /* no modern rounding */
+}
+
+h1{
+    color:#ffd29c;                   /* amber title */
+    font-weight:normal;
+    letter-spacing:1px;
+    margin-top:0;
+    text-transform:uppercase;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+td{
+    padding:8px 6px;
+    vertical-align:top;
+}
+
+
+
+
+textarea{
+    resize:vertical;
+}
+
+button{
+    background:#a67c52;              /* clay button */
+    color:#2b1b0f;
+    border:2px solid #ffd29c;
+    padding:6px 12px;
+    font-family:inherit;
+    font-weight:bold;
+    cursor:pointer;
+    border-radius:0;
+}
+
+button:hover{
+    background:#ffd29c;
+    color:#2b1b0f;
+}
+
+label{
+    font-size:14px;
+    color:#d7b48c;
+}
+
+hr{
+    border:0;
+    border-top:2px solid #a67c52;
+    margin-top:20px;
+}
+/* Text-like inputs (text, number, password) and textarea */
+input[type="text"],
+input[type="number"],
+input[type="password"],
+textarea {
+    width:100%;
+    background:#1f140c;        /* dark inset brown */
+    border:2px solid #a67c52;  /* clay border */
+    color:#ffd29c;             /* amber text */
+    padding:6px;
+    font-family:inherit;       /* monospace */
+    border-radius:0;
+}
+
+/* Focus state */
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+    outline:none;
+    background:#3a2415;       /* lighter brown panel for readability */
+    border-color:#ffd29c;     /* amber border */
+    color:#ffd29c;            /* amber text */
+    caret-color:#ffd29c;      /* amber cursor */
+}
+/* Hide the default checkbox */
+input[type="checkbox"] {
+    appearance: none;        /* remove native styling */
+    -webkit-appearance: none;
+    width:16px;
+    height:16px;
+    background:#1f140c;      /* match text area */
+    border:2px solid #a67c52;/* clay border */
+    border-radius:0;         /* sharp edges */
+    cursor:pointer;
+    vertical-align:middle;
+    margin-right:6px;
+    position: relative;
+}
+
+/* Tick mark */
+input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    top:2px;
+    left:5px;
+    width:4px;
+    height:8px;
+    border:solid #ffd29c;
+    border-width:0 2px 2px 0;
+    transform:rotate(45deg);
+}
+
+/* Focus state */
+input[type="checkbox"]:focus {
+    outline:none;
+    box-shadow:0 0 2px #ffd29caa;
+}
+</style>
+
+</head>
+<body>
+<div id="center">
+<h1>HashBrown maker</h1>
+<table>
+<tbody><tr>
+<td width="300">
+	Unieke phrase waar je een HashBrown van maakt.<br>
+	
+</td>
+<td>
+<input id="input"  type="text" value="www.google.com">
+</td>
+</tr>
+<tr><td>Jouw ene ring, die alle regeert:<br>
+</td><td><input id="seed"  type="text" value="one ring"></td></tr>
+<tr><td>Lengte HashBrown: </td><td><input id="HashBrown-lengte" type="number" min="8" value="16"></td></tr>
+<tr>
+<td>Toegestane tekens (output tokenset):</td>
+<td>
+<textarea id="tokenset" 
+ 
+style="width:100%; height:70px;">ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*?=</textarea>
+</td>
+</tr>
+
+<tr>
+<td>Vereisten (Must include):</td>
+<td>
+<label><input type="checkbox" id="reqLower"> lowercase</label><br>
+<label><input type="checkbox" id="reqUpper"> uppercase</label><br>
+<label><input type="checkbox" id="reqDigit"> digit</label><br>
+<label><input type="checkbox" id="reqSymbol"> symbol</label>
+</td>
+</tr>
+
+<tr><td>Jouw HashBrown: </td><td><input  type="text" id="output" readonly=""></td><td><button id="copyTextBtn">Kopieren</button></td></tr>
+</tbody></table>
+<hr>
+</div>
+<script>
+document.getElementById("input").addEventListener("keyup", toonHashBrown);
+document.getElementById("HashBrown-lengte").addEventListener("keyup", toonHashBrown);
+document.getElementById("seed").addEventListener("keyup", toonHashBrown);
+document.getElementById("HashBrown-lengte").addEventListener("change", toonHashBrown);
+document.getElementById("HashBrown-lengte").addEventListener("input", toonHashBrown);
+document.getElementById("tokenset").addEventListener("keyup", toonHashBrown);
+document.getElementById("reqLower").addEventListener("change", toonHashBrown);
+document.getElementById("reqUpper").addEventListener("change", toonHashBrown);
+document.getElementById("reqDigit").addEventListener("change", toonHashBrown);
+document.getElementById("reqSymbol").addEventListener("change", toonHashBrown);
+
+copyTextBtn = document.querySelector('#copyTextBtn');
+      copyTextBtn.addEventListener('click', function(event) {
+        let copyTextarea = document.querySelector('#output');
+        copyTextarea.focus();
+        copyTextarea.select();
+        try {
+          let successful = document.execCommand('copy');
+          let msg = successful ? 'successful' : 'unsuccessful';
+          alert('Je kunt nu je HashBrown plakken met windowstoets-V of appeltje-V ' + msg);
+        } catch(err) {
+          alert('Unable to copy');
+        }
+      });
+
+toonHashBrown();
+function BrownianHash(string) 
+{
+	var legal="ABCDEFGHJKMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%^&*?="; // easily typable, no confusion with visually similar O0, {([, -_~ and l1I also no <, cause that would be seen as html tag! 
+    var hash = "";
+	var max_safe_integer=248722392955571; // this is a good PRIME number, that is WELL within 32 bit safe bounds. MAX_SAFE_INTEGER is supposed to be: 9007199254740991
+	//document.getElementById("max").innerHTML=(max_safe_integer+"<"+Number.MAX_SAFE_INTEGER+"?");
+    if (string.length == 0) {
+        return "Er ging iets mis";
+    }
+	var count=7,nr1=1,nr2=2,nr3=3,nr4=4,nr;
+	var seed=document.getElementById("seed").value.toLowerCase();
+	for (var i = 0; i<seed.length;i++) 
+	{
+		count=(count+(i+1)*seed.charCodeAt(i))%max_safe_integer;
+	}
+	var lengte=parseInt(document.getElementById("HashBrown-lengte").value);
+	
+	for (var i = 0; hash.length<(lengte+256); i++) 
+		{
+		    count=(count+string.charCodeAt(i%string.length))%max_safe_integer;
+			if(count%2)
+			{
+				nr1=Math.floor(Math.abs(  (17+count+nr4)%23  ))%max_safe_integer;
+				nr2=Math.floor(Math.abs(  ((count*3+3)%57)*19+nr1%Math.floor(nr3/5+19) ))%max_safe_integer;
+				nr3=Math.floor(Math.abs(  23+(Math.floor(count*3*(nr2+i))%31)*5+hash.length%7+nr1%5  ))%max_safe_integer;
+				nr4=Math.floor(Math.abs(  (i%17+count%5+nr1+hash.length%11)%57+nr3  ))%max_safe_integer;
+			}else
+			{
+				nr4=Math.floor(Math.abs(  (55+count+nr1)%37  ))%max_safe_integer;
+				nr3=Math.floor(Math.abs(  ((count*13+19)%101)*71+nr2%Math.floor(nr4/3+17) ))%max_safe_integer;
+				nr2=Math.floor(Math.abs(  83+(Math.floor(count*5*(nr3+i))%27)*5+hash.length%7+nr1%5  ))%max_safe_integer;
+				nr1=Math.floor(Math.abs(  (count%5+nr2+i%17)%73+nr3  ))%max_safe_integer;
+			}
+			nr=Math.floor(Math.abs(  (37+nr1)+(19+nr2+i)+(7+nr3+23+nr4*hash.length) ))%max_safe_integer;
+			//console.log(nr1,nr2,nr3,nr4,nr);
+			var chr = legal.charAt(nr%legal.length);
+			 count=(count+chr.charCodeAt(0))%max_safe_integer;
+			hash+=chr;
+	}
+	console.log("hash-is:"+hash);
+	var short_hash=hash.substr(-lengte);
+    return short_hash; // take last 16 characters for maximum hashing.
+}
+function enforcePolicy(source, lengte) {
+    var requireLower = document.getElementById("reqLower").checked;
+    var requireUpper = document.getElementById("reqUpper").checked;
+    var requireDigit = document.getElementById("reqDigit").checked;
+    var requireSymbol = document.getElementById("reqSymbol").checked;
+
+    // Helpers
+    function hasLower(str){ return /[a-z]/.test(str); }
+    function hasUpper(str){ return /[A-Z]/.test(str); }
+    function hasDigit(str){ return /[0-9]/.test(str); }
+    function hasSymbol(str){ return /[^a-zA-Z0-9]/.test(str); }
+
+    function valid(str){
+        if(requireLower && !hasLower(str)) return false;
+        if(requireUpper && !hasUpper(str)) return false;
+        if(requireDigit && !hasDigit(str)) return false;
+        if(requireSymbol && !hasSymbol(str)) return false;
+        return true;
+    }
+
+    // 1?? Sliding window: try existing substrings first
+    for(var shift=0; shift <= source.length - lengte; shift++){
+        var candidate = source.substr(shift, lengte);
+        if(valid(candidate)){
+            return candidate;
+        }
+    }
+
+    // 2?? Fallback: deterministic first substring
+    var result = source.substr(0, lengte).split('');
+
+    // 3?? Identify missing character types
+    var missing = [];
+    if(requireLower && !hasLower(result.join(''))) missing.push('lower');
+    if(requireUpper && !hasUpper(result.join(''))) missing.push('upper');
+    if(requireDigit && !hasDigit(result.join(''))) missing.push('digit');
+    if(requireSymbol && !hasSymbol(result.join(''))) missing.push('symbol');
+
+    // 4?? Deterministic insertion of missing types
+    const insertionChars = {
+        lower: 'a',
+        upper: 'A',
+        digit: '0',
+        symbol: '!'
+    };
+
+    missing.forEach((type, index) => {
+        // Spread across the string to avoid conflicts
+        const pos = Math.floor(index * result.length / missing.length);
+        result[pos] = insertionChars[type];
+    });
+
+    return result.join('');
+}
+
+
+function toonHashBrown()
+{ 
+    var phrase=document.getElementById("input").value.toLowerCase();
+    var fullHash = BrownianHash(phrase); // still deterministic
+    
+    var lengte=parseInt(document.getElementById("HashBrown-lengte").value);
+    var tokenset=document.getElementById("tokenset").value;
+    
+    // Filter hash to allowed tokens only
+    var filtered="";
+    for(var i=0;i<fullHash.length;i++){
+        if(tokenset.indexOf(fullHash[i])!==-1){
+            filtered+=fullHash[i];
+        }
+    }
+
+    if(filtered.length<lengte){
+        // deterministic extension by reusing fullHash
+        filtered+=fullHash;
+    }
+
+    var result = enforcePolicy(filtered, lengte);
+    document.getElementById("output").value=result;
+}
+</script>
+
+</body></html>
