@@ -1,4 +1,7 @@
+# HashBrown
 **HashBrown Maker** is a deterministic hash generator that creates reproducible, customizable hashes from a user-provided phrase and secret seed. 
+
+live:  https://beauterre.github.io/HashBrown/
 
 ## Features
 
